@@ -26,6 +26,7 @@ value of log for amplification and deletion is amplification  > 0.25 and deletio
 
 #### GISTIC2  need many segment file for analyse , you may need the arraylistfile.txt and cnvfile.txt
 
+```
 cnvfile.txt
 SNP_A-1511055	Variation_4091	
 SNP_A-1641749	Variation_2158	
@@ -58,6 +59,7 @@ secondary_GBM_6	23	80841379	81217783	9	-2.489093
 .........
 primary_GBM_30	3	48603	184937009	7379	0.049753
 primary_GBM_30	3	184957186	185413394	6	-0.9328935
+```
 
 So the arraylistfile.txt is the sample name  ,but the cnvfile.txt is what?
 
