@@ -63,6 +63,13 @@ primary_GBM_30	3	184957186	185413394	6	-0.9328935
 
 So the arraylistfile.txt is the sample name  ,but the cnvfile.txt is what?
 
+```
+Option #1: A two column, tab-delimited file with an optional header row. The marker names given in this file must match the marker names given in the markers file. The CNV identifiers are for user use and can be arbitrary. The column headers are: (1) Marker Name and (2) CNV Identifier
+```
+
+So you can arbitray it....
+
+
 附录PS:
 
 参考网址：
