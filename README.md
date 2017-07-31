@@ -27,4 +27,10 @@ http://wp.zxzyl.com/?p=156
 
 https://www.biostars.org/p/158408/
 
+for GISTIC2 install
+
+http://portals.broadinstitute.org/cgi-bin/cancer/publications/pub_paper.cgi?mode=view&paper_id=216&p=t
+
+http://www.jianshu.com/p/eafa7e266806
+
 等等。
