@@ -19,6 +19,10 @@ the workflow for varscan2 CNV analyse
 ### step6 GISTIC2 对于多个样本的CNV分析的话，后续一般会用GISTIC/REA/CMDS 这些软件来分析 significant CNVs,这里用GISTIC2 ，参考网上各人方法与信息综合得到本分析CNV流程
 
 
+value of log for amplification and deletion is amplification  > 0.25 and deletion < -0.25
+
+-0.25< log2 value <0.25  is  neutral
+
 附录PS:
 
 参考网址：
