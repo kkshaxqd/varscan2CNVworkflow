@@ -24,9 +24,9 @@ value of log for amplification and deletion is amplification  > 0.25 and deletio
 
 ### step7 GISTIC2 对于多个样本的CNV分析的话，后续一般会用GISTIC/REA/CMDS 这些软件来分析 significant CNVs,这里用GISTIC2 ，参考网上各人方法与信息综合得到本分析CNV流程
 
-
+```
 usage: sh varscancnvworkflow.sh <tumorname> <normalname> <bam and mpileup path> <ID>
-
+```
 
 附录PS:
 
