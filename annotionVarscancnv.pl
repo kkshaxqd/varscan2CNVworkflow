@@ -64,7 +64,7 @@ while (<INFILE1>)
 		$start = $info[2];
 		$stop = $info[3];
 		$num_markers= $info[4];
-		if($start && $stop){$kb=$stop-$start;}else{$kb="-";}
+		if($start && $stop){$kb=sprintf("%.2f",($stop-$start)/1000);}else{$kb="-";}
 		
 		$line=$_."\t".$CNV_Type."\t".$kb;
 		

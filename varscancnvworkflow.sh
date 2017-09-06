@@ -1,21 +1,21 @@
 #!/bin/bash
 #content:workflow for varscan2 CNV in tumor and normal analyse
-#dataï¼š2017-07-27
-#authorï¼š zhangqiaoshi
+#data£º2017-07-27
+#author£º zhangqiaoshi
 #email: zhangqshxxzz@gmial.com
 #script for the varscan2 cnv  
-#step1 samtools  flagstat  ç›¸åº”bam  # ä¸ºäº†è®¡ç®—dataratio
-#step2 samtools  mpileup   ç›¸åº”bam
+#step1 samtools  flagstat  ÏàÓ¦bam  # ÎªÁË¼ÆËãdataratio
+#step2 samtools  mpileup   ÏàÓ¦bam
 #step3 varscan2 copynumber --p-value 0.005 --min-coverage 30 --min-map-qual 20 --min-base-qual 20 --data-ratio dataratio
 #step4 DNAcopy.R
 #step5 mergeSegment
-#step6 GISTIC2 å¯¹äºå¤šä¸ªæ ·æœ¬çš„CNVåˆ†æçš„è¯ï¼Œåç»­ä¸€èˆ¬ä¼šç”¨GISTIC/REA/CMDS è¿™äº›è½¯ä»¶æ¥åˆ†æ significant CNVs,è¿™é‡Œç”¨GISTIC2 ï¼Œå‚è€ƒç½‘ä¸Šå„äººæ–¹æ³•ä¸ä¿¡æ¯ç»¼åˆå¾—åˆ°æœ¬åˆ†æCNVæµç¨‹
+#step6 GISTIC2 ¶ÔÓÚ¶à¸öÑù±¾µÄCNV·ÖÎöµÄ»°£¬ºóĞøÒ»°ã»áÓÃGISTIC/REA/CMDS ÕâĞ©Èí¼şÀ´·ÖÎö significant CNVs,ÕâÀïÓÃGISTIC2 £¬²Î¿¼ÍøÉÏ¸÷ÈË·½·¨ÓëĞÅÏ¢×ÛºÏµÃµ½±¾·ÖÎöCNVÁ÷³Ì
 #==========================path=============
 start=`date +%s`
 path_to_VarScan=/mnt/local-disk2/qszhang/biosoft
 path_to_code=/mnt/local-disk2/qszhang/varscan_cnv_study/Breast_12_CNV
 work=/mnt/local-disk2/qszhang/varscan_cnv_study/Breast_12_CNV
-#============ä¼ é€’å‚æ•°=======================
+#============´«µİ²ÎÊı=======================
 if [ $# -ne 4 ]
 then
     echo "usage: $0 <tumorname> <normalname> <bam and mpileup path> <ID>"
@@ -65,17 +65,17 @@ samtools flagstat $3/$normalname.sort.dedup.bam > $normalname.flagstat
 	cnum=$(grep -m 1 mapped $normalname.flagstat | cut -f1 -d' ')
 	dataratio=$(echo "scale=2;$cnum/$tnum" | bc)   
 
-#======================scale=2è¡¨ç¤ºå–å°æ•°ç‚¹åä¸¤ä½==============
+#======================scale=2±íÊ¾È¡Ğ¡ÊıµãºóÁ½Î»==============
 
 
-#======================$tumorname.cnvoutç”Ÿæˆ$tumorname.cnvout.copynumberæ–‡ä»¶========================
+#======================$tumorname.cnvoutÉú³É$tumorname.cnvout.copynumberÎÄ¼ş========================
 java -jar $path_to_VarScan/VarScan.v2.4.0.jar copynumber $normal_pip $tumor_pip  $tumorname.cnvout --p-value 0.005 --min-coverage 30 --min-map-qual 20 --min-base-qual 20 --data-ratio $dataratio
-#é»˜è®¤çš„Min coverage:   10   Min avg qual:   15    P-value thresh: 0.01  --mpileup 1ï¼ˆæ˜¯å•ç‹¬çš„mpileupæ–‡ä»¶ï¼‰  
+#Ä¬ÈÏµÄMin coverage:   10   Min avg qual:   15    P-value thresh: 0.01  --mpileup 1£¨ÊÇµ¥¶ÀµÄmpileupÎÄ¼ş£©  
 #Did you normalize your data for differences in library size ( as you mentioned normal 30X and tumor 65X) ?
 #VarScan2 copynumber has a parameter --data-ratio which accounts for this difference.
-#from è¿™ä¸ªè¯´æ˜ï¼Œ --data-ratio è¿™ä¸ªå‚æ•°å¯ä»¥ç”¨æ¥ä¿®æ­£æ­£å¸¸æ ·æœ¬å’Œè‚¿ç˜¤æ ·æœ¬æµ‹åºæ•°æ®é—´å·®åˆ«æ¥ç€ã€‚  æ¯”ä¾‹ä¸º 1  ï¼Œå³æ­£å¸¸å’Œè‚¿ç˜¤æ ·æœ¬å¹³å‡è¦†ç›–åº¦æ¯”ä¾‹ï¼Ÿ The normal/tumor input data ratio 
-#æ‰€ä»¥é¦–å…ˆæˆ‘è¦è®¡ç®—ä¸‹æ­£å¸¸æ ·æœ¬å’Œè‚¿ç˜¤æ ·æœ¬çš„å¹³å‡è¦†ç›–åº¦æ¥ç€
-#æ‰€ä»¥é¦–å…ˆè¦åšçš„æ˜¯ç»Ÿè®¡bamæ¥ç€
+#from Õâ¸öËµÃ÷£¬ --data-ratio Õâ¸ö²ÎÊı¿ÉÒÔÓÃÀ´ĞŞÕıÕı³£Ñù±¾ºÍÖ×ÁöÑù±¾²âĞòÊı¾İ¼ä²î±ğÀ´×Å¡£  ±ÈÀıÎª 1  £¬¼´Õı³£ºÍÖ×ÁöÑù±¾Æ½¾ù¸²¸Ç¶È±ÈÀı£¿ The normal/tumor input data ratio 
+#ËùÒÔÊ×ÏÈÎÒÒª¼ÆËãÏÂÕı³£Ñù±¾ºÍÖ×ÁöÑù±¾µÄÆ½¾ù¸²¸Ç¶ÈÀ´×Å
+#ËùÒÔÊ×ÏÈÒª×öµÄÊÇÍ³¼ÆbamÀ´×Å
 
 
 
@@ -83,12 +83,12 @@ java -jar $path_to_VarScan/VarScan.v2.4.0.jar copyCaller $tumorname.cnvout.copyn
 
 Rscript $path_to_code/DNAcopy.R  $tumorname.cnvout.copynumber.called $tumorname.dnacopy.out $tumorname
 
-#mergeSegment.plä½¿ç”¨æ³¨æ„
-#1 mergeSegments.pl çš„ 134 è¡Œ å’Œ 361è¡Œ çš„ä¸¤ä¸ªå˜é‡ $sample æ˜¯å¯¹åº”çš„ï¼Œä¸¤ä¸ªéƒ½éœ€è¦åˆ é™¤ï¼Œä¸ç„¶ç»“æœä¼šå‡ºé”™ï¼ˆoutput å†…å®¹å’Œè¡Œå·ä¸å¯¹åº”ï¼Œä¸” pvalue é”™è¯¯ï¼‰ï¼›
-#2 mergeSegments.plè¾“å…¥æ–‡ä»¶é‡Œé¢çš„chrosome è¡¨ç¤ºæ–¹æ³•éœ€è¦å’Œ armSizes æ–‡ä»¶é‡Œé¢çš„å¯¹åº”ï¼ˆå¦‚ chr1 å¯¹åº” chr1ï¼Œ 1 å¯¹åº” 1ï¼‰ï¼Œ
-#å› ä¸ºæœ‰çš„reference genome chrosome æ²¡æœ‰ chr å‰ç¼€ã€‚
-#3 å»æ‰è¾“å…¥æ–‡ä»¶é‡Œé¢å«æœ‰NA å€¼çš„è¡Œ
-#4 å»æ‰è¾“å…¥æ–‡ä»¶é‡Œé¢ åŒ…å«çš„ä¸€äº› çº¿ç²’ä½“DNAï¼ˆMTï¼‰æˆ–æ˜¯ æœªçŸ¥åŒºåŸŸçš„DNAï¼ˆGL*ï¼‰çš„è¡Œ
+#mergeSegment.plÊ¹ÓÃ×¢Òâ
+#1 mergeSegments.pl µÄ 134 ĞĞ ºÍ 361ĞĞ µÄÁ½¸ö±äÁ¿ $sample ÊÇ¶ÔÓ¦µÄ£¬Á½¸ö¶¼ĞèÒªÉ¾³ı£¬²»È»½á¹û»á³ö´í£¨output ÄÚÈİºÍĞĞºÅ²»¶ÔÓ¦£¬ÇÒ pvalue ´íÎó£©£»
+#2 mergeSegments.plÊäÈëÎÄ¼şÀïÃæµÄchrosome ±íÊ¾·½·¨ĞèÒªºÍ armSizes ÎÄ¼şÀïÃæµÄ¶ÔÓ¦£¨Èç chr1 ¶ÔÓ¦ chr1£¬ 1 ¶ÔÓ¦ 1£©£¬
+#ÒòÎªÓĞµÄreference genome chrosome Ã»ÓĞ chr Ç°×º¡£
+#3 È¥µôÊäÈëÎÄ¼şÀïÃæº¬ÓĞNA ÖµµÄĞĞ
+#4 È¥µôÊäÈëÎÄ¼şÀïÃæ °üº¬µÄÒ»Ğ© ÏßÁ£ÌåDNA£¨MT£©»òÊÇ Î´ÖªÇøÓòµÄDNA£¨GL*£©µÄĞĞ
 
 cat $tumorname.dnacopy.out| grep -v -e chrM -e random -e hap -e chrUn -e NA > $tumorname.dnacopy.out.segment
 
@@ -100,11 +100,11 @@ perl $path_to_code/mergeSegments.pl $tumorname.dnacopy.out.segment --ref-arm-siz
 
 #find recurent CNV
 #use gistic2 http://www.jianshu.com/p/eafa7e266806
-#Step-3.1: Make marker position   -e chrX -e chrY -e chrX -e chrY  ID æŸ“è‰²ä½“ èµ·ç‚¹
-cat $tumorname.cnvout.copynumber | grep -v -e chrom -e chrM  -e random -e hap -e chrUn -e NA | awk 'BEGIN {OFS="\t"} { print "'$tumorname'",$1,$2 }' | sed 's/chr//g' > $tumorname.markerPosition
+#Step-3.1: Make marker position   -e chrX -e chrY -e chrX -e chrY  ID È¾É«Ìå Æğµã
+cat $tumorname.cnvout.copynumber | grep -v -e chrom -e chrM  -e random -e hap -e chrUn -e NA | awk 'BEGIN {OFS="\t"} { print $tumorname,$1,$2 }' | sed 's/chr//g' > $tumorname.markerPosition
 
-#Step-3.2: Make segment file. The output from mergeSegment.pl, which in this example with start with suffix â€œfilteredOutputâ€™ should be used to make segment file.
-cat $tumorname.cnv.events.tsv | awk 'BEGIN {OFS="\t"} { print "'$tumorname'",$1,$2,$3,$6,$4 }' | grep -v -e chrM   -e random -e hap -e chrUn -e NA | sed 's/chr//g' > $tumorname.segmentedFile
+#Step-3.2: Make segment file. The output from mergeSegment.pl, which in this example with start with suffix ¡°filteredOutput¡¯ should be used to make segment file.  ##the mergesegment output cannot run gistic2 ,so change to the last step of mergesegment 
+cat $tumorname.dnacopy.out.segment | awk 'BEGIN {OFS="\t"} { print $1,$2,$3,$4,$5,$6 }' | grep -v -e chrM   -e random -e hap -e chrUn -e NA | sed 's/chr//g' > $tumorname.segmentedFile
 
 markersfile=$tumorname.markerPosition
 
@@ -112,7 +112,7 @@ segfile=$tumorname.segmentedFile
 
 refgenefile=/mnt/local-disk2/qszhang/biosoft-v1/GISTIC/refgenefiles/hg19.mat
 
-basedir=$tumorname"_result_gistic"   #è¿™ä¸ªæ˜¯è¾“å‡ºç»“æœçš„ç›®å½•
+basedir=$tumorname"_result_gistic"   #Õâ¸öÊÇÊä³ö½á¹ûµÄÄ¿Â¼
 
 mkdir $basedir
 
