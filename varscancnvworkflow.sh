@@ -52,6 +52,7 @@ tumorname=$1
 tumor_pip=$3/$tumorname.mpileup
 normalname=$2
 normal_pip=$3/$normalname.mpileup	
+ID=$4
 #===========================step01============
 cd $work
 mkdir $tumorname"CNV"$4
@@ -81,7 +82,7 @@ java -jar $path_to_VarScan/VarScan.v2.4.0.jar copynumber $normal_pip $tumor_pip 
 
 java -jar $path_to_VarScan/VarScan.v2.4.0.jar copyCaller $tumorname.cnvout.copynumber --output-file $tumorname.cnvout.copynumber.called
 
-Rscript $path_to_code/DNAcopy.R  $tumorname.cnvout.copynumber.called $tumorname.dnacopy.out $tumorname
+Rscript $path_to_code/DNAcopy.R  $tumorname.cnvout.copynumber.called $tumorname.dnacopy.out $ID
 
 #mergeSegment.pl使用注意
 #1 mergeSegments.pl 的 134 行 和 361行 的两个变量 $sample 是对应的，两个都需要删除，不然结果会出错（output 内容和行号不对应，且 pvalue 错误）；
@@ -101,18 +102,26 @@ perl $path_to_code/mergeSegments.pl $tumorname.dnacopy.out.segment --ref-arm-siz
 #find recurent CNV
 #use gistic2 http://www.jianshu.com/p/eafa7e266806
 #Step-3.1: Make marker position   -e chrX -e chrY -e chrX -e chrY  ID 染色体 起点
-cat $tumorname.cnvout.copynumber | grep -v -e chrom -e chrM  -e random -e hap -e chrUn -e NA | awk 'BEGIN {OFS="\t"} { print $tumorname,$1,$2 }' | sed 's/chr//g' > $tumorname.markerPosition
+#cat $tumorname.cnvout.copynumber | grep -v -e chrom -e chrM  -e random -e hap -e chrUn -e NA -e num_markers| awk 'BEGIN {OFS="\t"} { print "'$tumorname'",$1,$2 }' | sed 's/chr//g' > $tumorname.markerPosition
 
-#Step-3.2: Make segment file. The output from mergeSegment.pl, which in this example with start with suffix “filteredOutput’ should be used to make segment file.  ##the mergesegment output cannot run gistic2 ,so change to the last step of mergesegment 
-cat $tumorname.dnacopy.out.segment | awk 'BEGIN {OFS="\t"} { print $1,$2,$3,$4,$5,$6 }' | grep -v -e chrM   -e random -e hap -e chrUn -e NA | sed 's/chr//g' > $tumorname.segmentedFile
+#Step-3.2: Make segment file. The output from mergeSegment.pl, which in this example with start with suffix “filteredOutput’ should be used to make segment file.
+#cat $tumorname.cnv.events.tsv | awk 'BEGIN {OFS="\t"} { print "'$tumorname'",$1,$2,$3,$6,$4 }' | grep -v -e chrM   -e random -e hap -e chrUn -e NA -e num_markers | sed 's/chr//g' > $tumorname.segmentedFile
 
-markersfile=$tumorname.markerPosition
+cat $tumorname.cnvout.copynumber | grep -v -e chrom -e chrom -e chrM -e random -e hap -e chrUn |awk 'BEGIN{OFS="\t"}{print "'$ID'",$1,$2}'|sed 's/chr//g'>../$ID.newtest.markerPosition
 
-segfile=$tumorname.segmentedFile
+cat $tumorname.dnacopy.out.segment | awk 'BEGIN {OFS="\t"} { print "'$ID'",$2,$3,$4,$5,$6 }' | grep -v -e chrM   -e random -e hap -e chrUn -e NA -e num_markers | sed 's/chr//g' > ../$ID.newtest.segmentedFile
+
+cat ../$ID.newtest.segmentedFile | grep -v -e chrom -e chrom -e chrM -e random -e hap -e chrUn |perl -e  'while(<>){@aa=split/\t/,$_;print "$aa[0]\t$aa[1]\t$aa[2]\n$aa[0]\t$aa[1]\t$aa[3]\n"}'|sed 's/chr//g'>../$ID.newtest.markerPosition_test
+
+
+
+markersfile=$ID.newtest.markerPosition
+
+segfile=$ID.newtest.segmentedFile
 
 refgenefile=/mnt/local-disk2/qszhang/biosoft-v1/GISTIC/refgenefiles/hg19.mat
 
-basedir=$tumorname"_result_gistic"   #这个是输出结果的目录
+basedir=$work/Breast_12_CNV_result_gistic   #这个是输出结果的目录
 
 mkdir $basedir
 
